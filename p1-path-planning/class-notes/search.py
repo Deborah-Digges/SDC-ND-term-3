@@ -20,6 +20,9 @@ grid = [[0, 0, 1, 0, 0, 0],
         [0, 0, 1, 0, 1, 0],
         [0, 0, 1, 0, 1, 0],
         [0, 0, 0, 0, 1, 0]]
+
+expand = [ [-1 for i in range(len(grid[0]))] for i in range(len(grid)) ]
+
 init = [0, 0]
 goal = [len(grid)-1, len(grid[0])-1]
 cost = 1
@@ -45,7 +48,7 @@ def findGoal(state_list):
    Return the node with the lowest cost 
    Also removes the node from the list
 """
-def findLowestCodeNode(state_list):
+def findLowestCostNode(state_list):
     lowest_cost_node = min(state_list, key=lambda x: x[0])
     state_list.remove(lowest_cost_node)
     return lowest_cost_node
@@ -77,6 +80,12 @@ def findReachableNodes(node):
                          grid[x[1]][x[2]]!=2,
     [[node_cost, node_x + delta_x, node_y + delta_y] for (delta_x, delta_y) in delta] )
 
+"""
+    node: [cost, x-pos, y-pos]
+    Updates the node with the order in which it was visited
+"""
+def markExpanded(node, count):
+    expand[node[1]][node[2]] = count
 
 def search(grid,init,goal,cost):
     # ----------------------------------------
@@ -86,19 +95,33 @@ def search(grid,init,goal,cost):
     # initial node
     expansion_list = [[0, init[0], init[1]]]
     expansion_list_temp = []
+    expansion_count = 0
 
+    # Continue as long as there are nodes to be expanded
     while len(expansion_list) != 0:
 
         # Check if goal has been reached
         state = findGoal(expansion_list)
         if(state):
+            markExpanded(state, expansion_count)
             return [state[0], state[1], state[2]]
 
-        next_node = findLowestCodeNode(expansion_list)
+        # Remove a node to be expanded
+        next_node = findLowestCostNode(expansion_list)
 
+        # Update the order of expansion of the node
+        markExpanded(next_node, expansion_count)
+        expansion_count += 1
+
+        # Mark the node as visited
         mark(next_node)
 
         reachable_nodes = findReachableNodes(next_node)
+        for node in reachable_nodes:
+            mark(node)
+
+        # The reachable nodes will be the ones we will later 
+        # Add to the expansion list
         expansion_list_temp.extend(reachable_nodes)
 
         if(len(expansion_list) == 0):
@@ -108,3 +131,5 @@ def search(grid,init,goal,cost):
     return 'Search Failed'
 
 print search(grid, init, goal, cost)
+for row in expand:
+    print row
