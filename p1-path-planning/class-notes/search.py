@@ -35,6 +35,7 @@ delta = [[-1, 0], # go up
 
 delta_name = ['^', '<', 'v', '>']
 
+path = {}
 """
     State list of the form [[cost, position-x, position-y]]
 """
@@ -87,6 +88,53 @@ def findReachableNodes(node):
 def markExpanded(node, count):
     expand[node[1]][node[2]] = count
 
+
+"""
+    Create a structure where each child node is aware of it's parent
+"""
+def populatePath(childNodes, parentNode):
+    for child in childNodes:
+        path[(child[1], child[2])] = (parentNode[1], parentNode[2])
+
+"""
+    Compare 2 nodes for equality
+"""
+def isEqual(node1, node2):
+    return node1[0] == node2[0] and node1[1] == node2[1]
+
+"""
+    Starting from the final goal
+    trace the path which was taken
+"""
+def tracePath(path, goal):
+    node = tuple(goal)
+    path_list = []
+    while not isEqual(node, init):
+        path_list.append(node)
+        if node not in path:
+            return None
+        node = path[node]
+    path_list.append(tuple(init))   
+    path_list.reverse()
+    return path_list
+
+"""
+    Given the list of nodes traversed,
+    populate a matrix which shows appropriate
+    arrows for the action taken at each cell
+"""
+def populatePathMatrix(path):
+    if not path:
+        return "No Solution"
+    pathMatrix = [ ['' for i in range(len(grid[0]))] for i in range(len(grid)) ]
+
+    for i in range(0, len(path) - 1):
+        for j in range(len(delta)):
+            if isEqual( tuple(map(lambda x, y: x + y, path[i], delta[j])), path[i + 1]):
+                pathMatrix[path[i][0]][path[i][1]] = delta_name[j]
+    return pathMatrix
+
+
 def search(grid,init,goal,cost):
     # ----------------------------------------
     # insert code here
@@ -120,6 +168,9 @@ def search(grid,init,goal,cost):
         for node in reachable_nodes:
             mark(node)
 
+        # Populate path for backtracking
+        populatePath(reachable_nodes, next_node)
+
         # The reachable nodes will be the ones we will later 
         # Add to the expansion list
         expansion_list_temp.extend(reachable_nodes)
@@ -134,4 +185,9 @@ def search(grid,init,goal,cost):
 
 print search(grid, init, goal, cost)
 for row in expand:
+    print row
+
+pathTraversed = tracePath(path, goal)
+
+for row in populatePathMatrix(pathTraversed):
     print row
