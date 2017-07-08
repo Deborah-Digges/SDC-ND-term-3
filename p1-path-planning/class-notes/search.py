@@ -124,6 +124,8 @@ def search(grid,init,goal,cost):
         # Add to the expansion list
         expansion_list_temp.extend(reachable_nodes)
 
+        # After expanding currently reachable nodes
+        # Move on to the next level of reachable nodes
         if(len(expansion_list) == 0):
             expansion_list = expansion_list_temp
             expansion_list_temp = []
