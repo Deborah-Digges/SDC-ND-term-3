@@ -2,13 +2,13 @@
 # User Instructions:
 # 
 # Define a function, search() that returns a list
-# in the form of [optimal path length, row, col]. For
-# the grid shown below, your function should output
-# [11, 4, 5].
+# in the form of [optimal path length, row, col].
 #
 # If there is no valid path from the start point
 # to the goal, your function should return the string
 # 'fail'
+
+# The function performs a breadth first search on the nodes to reach the goal
 # ----------
 
 # Grid format:
@@ -181,7 +181,7 @@ def search(grid,init,goal,cost):
             expansion_list = expansion_list_temp
             expansion_list_temp = []
     
-    return 'Search Failed'
+    return 'fail'
 
 print search(grid, init, goal, cost)
 for row in expand:
