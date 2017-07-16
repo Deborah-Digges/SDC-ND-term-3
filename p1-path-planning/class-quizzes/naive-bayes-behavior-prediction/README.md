@@ -10,15 +10,14 @@ Your job is to write a classifier that can predict which of these three maneuver
 ![Vehicle Behaviours](https://d17h27t6h515a5.cloudfront.net/topher/2017/July/596940c9_naive-bayes/naive-bayes.png)
 
 
-Each coordinate contains 4 pieces of information:
+- Each coordinate contains 4 pieces of information:
 
 1. s
 2. d
-​3. s'
+3. s'
 4. d'
 ​
-​​ 
-You also know the lane width is 4 meters (this might be helpful in engineering features for your algorithm).
+​-You also know the lane width is 4 meters (this might be helpful in engineering features for your algorithm).
 
 ## Instructions
 - Implement the `train(self, data, labels)` and `predict(self, observation)` methods in the class GNB in classifier.py
