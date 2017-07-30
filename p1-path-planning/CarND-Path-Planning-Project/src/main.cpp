@@ -238,6 +238,48 @@ int main() {
           	vector<double> next_x_vals;
           	vector<double> next_y_vals;
 
+			double pos_x;
+			double pos_y;
+			double angle;
+			int path_size = previous_path_x.size();
+
+
+			if(path_size > 0) {
+				next_x_vals.push_back(previous_path_x[0]);
+				next_y_vals.push_back(previous_path_y[0]);
+			}
+
+
+//
+//			if(path_size == 0)
+//			{
+//				pos_x = car_x;
+//				pos_y = car_y;
+//				angle = deg2rad(car_yaw);
+//			}
+//			else
+//			{
+//				pos_x = previous_path_x[path_size-1];
+//				pos_y = previous_path_y[path_size-1];
+//
+//				double pos_x2 = previous_path_x[path_size-2];
+//				double pos_y2 = previous_path_y[path_size-2];
+//				angle = atan2(pos_y-pos_y2,pos_x-pos_x2);
+//			}
+
+			double dist_inc = 0.5;
+			double next_s = car_s + dist_inc;
+			for(int i = 0; i < 50-path_size; i++)
+			{
+				vector<double> xy = getXY(next_s, car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
+				next_x_vals.push_back(xy[0]);
+				next_y_vals.push_back(xy[1]);
+				next_s += dist_inc;
+			}
+
+
+            msgJson["next_x"] = next_x_vals;
+            msgJson["next_y"] = next_y_vals;
 
           	// TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
           	msgJson["next_x"] = next_x_vals;
