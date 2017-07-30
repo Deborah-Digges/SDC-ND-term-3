@@ -22,6 +22,27 @@ Vehicle::Vehicle(int lane, int s, int v, int a) {
 
 Vehicle::~Vehicle() {}
 
+vector<string> find_possible_next_states(string current_state) {
+	if(current_state == "KL") {
+		return {"KL", "PLCL", "PLCR"};
+	}
+	if(current_state == "LCL") {
+		return {"LCL", "KL"};
+	}
+
+	if(current_state == "LCR") {
+		return {"LCR", "KL"};
+	}
+
+	if(current_state == "PLCL") {
+		return {"KL", "LCL"};
+	}
+
+	if(current_state == "PLCR") {
+		return  {"KL", "LCR"};
+	}
+}
+
 // TODO - Implement this method.
 void Vehicle::update_state(map<int,vector < vector<int> > > predictions) {
 	/*
@@ -56,22 +77,77 @@ void Vehicle::update_state(map<int,vector < vector<int> > > predictions) {
       ]
     }
 
+
     */
-    state = "KL"; // this is an example of how you change state.
+	vector<string> states = find_possible_next_states(this->state);
+	//vector<string> states = {"KL", "LCL", "LCR", "PLCL", "PLCR"};
+    vector<double> costs;
+    double cost;
+    for (string test_state : states) {
+        cost = 0;
+        // create copy of our vehicle
+        Vehicle test_v = Vehicle(this->lane, this->s, this->v, this->a);
+        test_v.state = test_state;
+        test_v.realize_state(predictions);
+        // predict one step into future, for selected state
+        vector<int> test_v_state = test_v.state_at(1);
+        int pred_lane = test_v_state[0];
+        int pred_s = test_v_state[1];
+        int pred_v = test_v_state[2];
+        int pred_a = test_v_state[3];
+        //cout << "pred lane: " << pred_lane << " s: " << pred_s << " v: " << pred_v << " a: " << pred_a << endl;
 
+        cout << "tested state: " << test_state << endl;
 
+        // check for collisions
+        map<int, vector<vector<int> > >::iterator it = predictions.begin();
+        vector<vector<vector<int> > > in_front;
+        while(it != predictions.end())
+        {
+            int index = it->first;
+            vector<vector<int>> v = it->second;
+            // check predictions one step in future as well
+            if ((v[1][0] == pred_lane) && (abs(v[1][1] - pred_s) <= L) && index != -1) {
+                cout << "coll w/ car: " << index << ", "
+                     << v[1][0] << " " << pred_lane << ", "
+                     << v[1][1] << " " << pred_s << endl;
+                cost += 1000;
+            }
+            it++;
+        }
+
+        cost += 1*(10 - pred_v);
+        cost += 1*(pow(3 - pred_lane, 2));
+        //cost += 10*(1 - exp(-abs(pred_lane - 3)/(300 - (double)pred_s)));
+        if (pred_lane < 0 || pred_lane > 3) {
+            cost += 1000;
+        }
+
+        cout << "cost: " << cost << endl;
+        costs.push_back(cost);
+    }
+    double min_cost = 9999999;
+    int min_cost_index = 0;
+    for (int i = 0; i < costs.size(); i++) {
+        //cout << "cost[" << i << "]: " << costs[i] << endl;
+        if (costs[i] < min_cost) {
+            min_cost = costs[i];
+            min_cost_index = i;
+
+        }
+    }
+	state = states[min_cost_index];
+	//state = "LCR";
+	cout << "chosen state: " << state << endl;
 }
 
-void Vehicle::configure(vector<int> road_data) {
-	/*
-    Called by simulator before simulation begins. Sets various
-    parameters which will impact the ego vehicle.
-    */
-    target_speed = road_data[0];
-    lanes_available = road_data[1];
-    max_acceleration = road_data[2];
-    goal_lane = road_data[3];
-    goal_s = road_data[4];
+void Vehicle::configure(vector<int> road_data)
+{
+	target_speed = road_data[0];
+	lanes_available = road_data[1];
+	goal_s = road_data[2];
+	goal_lane = road_data[3];
+	max_acceleration = road_data[4];
 }
 
 string Vehicle::display() {

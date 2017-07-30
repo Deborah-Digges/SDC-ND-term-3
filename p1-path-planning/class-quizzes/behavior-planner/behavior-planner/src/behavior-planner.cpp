@@ -52,6 +52,7 @@ int main() {
 			cout << "Taking too long to reach goal. Go faster!" << endl;
 			break;
 		}
+		road.display();
 		road.advance();
 		road.display();
 		//time.sleep(float(1.0) / FRAMES_PER_SECOND);
