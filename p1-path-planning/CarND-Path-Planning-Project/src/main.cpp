@@ -244,10 +244,15 @@ int main() {
 			int path_size = previous_path_x.size();
 
 
-			if(path_size > 0) {
-				next_x_vals.push_back(previous_path_x[0]);
-				next_y_vals.push_back(previous_path_y[0]);
-			}
+//			if(path_size > 0) {
+//				for(int i=0; i<path_size; ++i) {
+//					next_x_vals.push_back(previous_path_x[i]);
+//					next_y_vals.push_back(previous_path_y[i]);
+//
+//					if(i > 10)
+//						break;
+//				}
+//			}
 
 
 //
@@ -267,9 +272,9 @@ int main() {
 //				angle = atan2(pos_y-pos_y2,pos_x-pos_x2);
 //			}
 
-			double dist_inc = 0.5;
+			double dist_inc = 0.45;
 			double next_s = car_s + dist_inc;
-			for(int i = 0; i < 50-path_size; i++)
+			for(int i = 0; i < 50-10; i++)
 			{
 				vector<double> xy = getXY(next_s, car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
 				next_x_vals.push_back(xy[0]);
