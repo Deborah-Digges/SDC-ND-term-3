@@ -241,7 +241,7 @@ int main() {
 
 							// TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
 
-							double dist_inc = 0.5;
+							double dist_inc = 0.3;
 
 							for(int i=0; i<50; ++i) {
 								// use i+1 instead of i, else the first point will be exactly where the car is at
