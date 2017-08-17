@@ -243,11 +243,6 @@ int main() {
 
 							int prev_size = previous_path_x.size();
 
-							json msgJson;
-
-							vector<double> next_x_vals;
-							vector<double> next_y_vals;
-
 							// Create a list of widely spaced (x,y) waypoints, evenly spaced at 30m
 							// Later we will interpolate these waypoints with a spline and fill it in with more points that control speed
 							vector<double> ptsx;
@@ -312,25 +307,53 @@ int main() {
 							}
 
 							// TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
+							tk::spline s;
+							s.set_points(ptsx, ptsy);
+							json msgJson;
+							vector<double> next_x_vals;
+							vector<double> next_y_vals;
 
-							double dist_inc = 0.3;
-
-							for(int i=0; i<50; ++i) {
-								// use i+1 instead of i, else the first point will be exactly where the car is at
-								// and it won't be transitioning
-								double next_s = car_s + dist_inc * (i + 1);
-
-								// we are in the middle lane
-								// the waypoints are measured from the double yellow lane in the middle of the road
-								// so we're about 1.5 lanes from where the waypoints are
-								// Each lane is 4m wide. To stay in the middle of the current lane, d should be 1.5 * 4 =  6
-								double next_d = 6;
-
-								vector<double> xy = getXY(next_s, next_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
-
-								next_x_vals.push_back(xy.at(0));
-								next_y_vals.push_back(xy.at(1));
+							// Add on all unused points from the previous path onto the generated trajectory
+							for(int i=0; i<previous_path_x.size(); ++i) {
+								next_x_vals.push_back(previous_path_x[i]);
+								next_y_vals.push_back(previous_path_y[i]);
 							}
+
+							// calculate how we break up spline points so that we travel at our desired reference velocity
+							double target_x = 30.0;
+							double target_y = s(target_x);
+
+							// Distance from the origin(where the car is currently present)
+							// To the desired horizon point
+							double target_distance = sqrt((target_x * target_x) + (target_y * target_y));
+
+							double x_add_on = 0;
+
+							// Number of steps til the horizon
+							double N = target_distance/(0.02 * ref_vel/2.24);
+
+							// We will only need to generate points to make the total upto 50
+							for(int i=1; i <= 50-previous_path_x.size(); ++i) {
+								double x_point = x_add_on + (target_x)/N;
+								double y_point = s(x_point);
+
+								x_add_on = x_point;
+
+								double x_ref = x_point;
+								double y_ref = y_point;
+
+								// Transform back to normal coordinate system from the
+								// car's coordinate system
+								x_point = (x_ref * cos(ref_yaw) - y_ref * sin(ref_yaw));
+								y_point = (x_ref * sin(ref_yaw) + y_ref * cos(ref_yaw));
+
+								x_point += ref_x;
+								y_point += ref_y;
+
+								next_x_vals.push_back(x_point);
+								next_y_vals.push_back(y_point);
+							}
+
 
 							// END
 
