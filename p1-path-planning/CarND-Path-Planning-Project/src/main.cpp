@@ -243,6 +243,40 @@ int main() {
 
 							int prev_size = previous_path_x.size();
 
+							if(prev_size > 0) {
+								car_s = end_path_s;
+							}
+
+							bool too_close = false;
+
+							// go through the sensor fusion data
+							for(int i=0; i < sensor_fusion.size(); ++i) {
+								float d = sensor_fusion[i][6];
+
+								// car is in my lane
+								if((d < 4*lane + 4) && (d > 4*lane)) {
+									double vx = sensor_fusion[i][3];
+									double vy = sensor_fusion[i][4];
+									double check_speed = sqrt(vx*vx + vy *vy);
+									double check_car_s = sensor_fusion[i][5];
+
+									// Using speed we can predict where the car will be in the future
+
+									// If using previous points, we can project s value out
+									check_car_s += ((double) prev_size * 0.2 * check_speed);
+
+									// Check for cars in front of us
+									// Check for cars in a small window in front of us
+									if((check_car_s > car_s)  && (check_car_s - car_s) < 30) {
+
+										// Do some logic here, lower reference velocity so we don't crash into the car
+										// in front of us. We could also flag to try to change lanes
+										ref_vel = 29.5;
+
+									}
+								}
+							}
+
 							// Create a list of widely spaced (x,y) waypoints, evenly spaced at 30m
 							// Later we will interpolate these waypoints with a spline and fill it in with more points that control speed
 							vector<double> ptsx;
