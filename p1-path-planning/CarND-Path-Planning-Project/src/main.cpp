@@ -251,29 +251,36 @@ int main() {
 							bool too_close = false;
 
 							// go through the sensor fusion data
-							for(int i=0; i < sensor_fusion.size(); ++i) {
-								float d = sensor_fusion[i][6];
+							if(sensor_fusion != NULL && sensor_fusion.size() > 0) {
+								for(int i=0; i < sensor_fusion.size(); ++i) {
+									float d = sensor_fusion[i][6];
 
-								// car is in my lane
-								if((d < 4*lane + 4) && (d > 4*lane)) {
-									double vx = sensor_fusion[i][3];
-									double vy = sensor_fusion[i][4];
-									double check_speed = sqrt(vx*vx + vy *vy);
-									double check_car_s = sensor_fusion[i][5];
+									// car is in my lane
+									if((d < (2 + 4*lane + 2)) && (d > (2 + 4*lane - 2))) {
+										double vx = sensor_fusion[i][3];
+										double vy = sensor_fusion[i][4];
+										double check_speed = sqrt(vx*vx + vy *vy);
+										double check_car_s = sensor_fusion[i][5];
 
-									// Using speed we can predict where the car will be in the future
+										// Using speed we can predict where the car will be in the future
 
-									// If using previous points, we can project s value out
-									check_car_s += ((double) prev_size * 0.2 * check_speed);
+										// If using previous points, we can project s value out
+										check_car_s += ((double) prev_size * 0.02 * check_speed);
 
-									// Check for cars in front of us
-									// Check for cars in a small window in front of us
-									if((check_car_s > car_s)  && (check_car_s - car_s) < 30) {
+										// Check for cars in front of us
+										// Check for cars in a small window in front of us
+										if((check_car_s > car_s)  && (check_car_s - car_s) < 30) {
 
-										// Do some logic here, lower reference velocity so we don't crash into the car
-										// in front of us. We could also flag to try to change lanes
-										too_close = true;
+											// Do some logic here, lower reference velocity so we don't crash into the car
+											// in front of us. We could also flag to try to change lanes
+											too_close = true;
 
+											// slam to the left lane
+											if(lane > 0) {
+												lane = 0;
+											}
+
+										}
 									}
 								}
 							}
