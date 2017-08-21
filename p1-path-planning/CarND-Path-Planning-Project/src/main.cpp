@@ -185,7 +185,7 @@ bool isLaneChangePossible(vector<vector<double>> sensor_fusion, double car_x, do
 				check_car_s += ((double) prev_size * 0.02 * check_speed);
 				double predicted_car_s =  car_s + ((double) prev_size * 0.02 * check_speed);
 
-				if((check_car_s > predicted_car_s)  && (check_car_s - predicted_car_s) < 150) {
+				if(abs(check_car_s - predicted_car_s) < 50) {
 					std::cout << "COLLISSION IN LANE:" << current_lane_check << std::endl;
 					laneSafe[current_lane_check] = false;
 				}
