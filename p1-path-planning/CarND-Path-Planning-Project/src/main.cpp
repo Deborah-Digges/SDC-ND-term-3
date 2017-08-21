@@ -160,6 +160,47 @@ vector<double> getXY(double s, double d, vector<double> maps_s,
 
 }
 
+bool isLaneChangePossible(vector<vector<double>> sensor_fusion, double car_x, double car_y,  double car_s,  double car_d, double car_yaw, double car_speed, int& car_lane, int prev_size,
+		vector<double> previous_path_x, vector<double> previous_path_y, vector<double> map_waypoints_s, vector<double> map_waypoints_x, vector<double> map_waypoints_y, double ref_vel) {
+	// go through the sensor fusion data
+	vector<bool> laneSafe = {true, true, true};
+
+	std::cout << "NUMBER_VEHICLES: " << sensor_fusion.size() << std::endl;
+	if(sensor_fusion.size() > 0) {
+		for(int i=0; i < sensor_fusion.size(); ++i) {
+			float d = sensor_fusion[i][6];
+			int current_lane_check = (int)(d / 4);
+			std::cout << "VECHICLE d: " << d << "Lane: " << current_lane_check << std::endl;
+
+			// car not in my lane in my lane
+			if(current_lane_check != car_lane) {
+				double vx = sensor_fusion[i][3];
+				double vy = sensor_fusion[i][4];
+				double check_speed = sqrt(vx*vx + vy *vy);
+				double check_car_s = sensor_fusion[i][5];
+
+				// Using speed we can predict where the car will be in the future
+
+				// If using previous points, we can project s value out
+				check_car_s += ((double) prev_size * 0.02 * check_speed);
+				double predicted_car_s =  car_s + ((double) prev_size * 0.02 * check_speed);
+
+				if((check_car_s > predicted_car_s)  && (check_car_s - predicted_car_s) < 150) {
+					std::cout << "COLLISSION IN LANE:" << current_lane_check << std::endl;
+					laneSafe[current_lane_check] = false;
+				}
+			}
+		}
+	}
+
+	for(int i=0; i < laneSafe.size(); ++i) {
+		if(laneSafe[i] && i != car_lane && abs(i-car_lane) < 2) {
+			car_lane = i;
+			break;
+		}
+	}
+}
+
 int main() {
 	uWS::Hub h;
 
@@ -233,14 +274,14 @@ int main() {
 							double car_speed = j[1]["speed"];
 
 							// Previous path data given to the Planner
-							auto previous_path_x = j[1]["previous_path_x"];
-							auto previous_path_y = j[1]["previous_path_y"];
+							vector<double> previous_path_x = j[1]["previous_path_x"];
+							vector<double> previous_path_y = j[1]["previous_path_y"];
 							// Previous path's end s and d values
 							double end_path_s = j[1]["end_path_s"];
 							double end_path_d = j[1]["end_path_d"];
 
 							// Sensor Fusion Data, a list of all other cars on the same side of the road.
-							auto sensor_fusion = j[1]["sensor_fusion"];
+							vector<vector<double>> sensor_fusion = j[1]["sensor_fusion"];
 
 							int prev_size = previous_path_x.size();
 
@@ -251,7 +292,7 @@ int main() {
 							bool too_close = false;
 
 							// go through the sensor fusion data
-							if(sensor_fusion != NULL && sensor_fusion.size() > 0) {
+							if(sensor_fusion.size() > 0) {
 								for(int i=0; i < sensor_fusion.size(); ++i) {
 									float d = sensor_fusion[i][6];
 
@@ -275,11 +316,9 @@ int main() {
 											// in front of us. We could also flag to try to change lanes
 											too_close = true;
 
-											// slam to the left lane
-											if(lane > 0) {
-												lane = 0;
-											}
+											std::cout << "SLOWING DOWN" << std::endl;
 
+											isLaneChangePossible(sensor_fusion, car_x, car_y, car_s, car_d, car_yaw, car_speed, lane, prev_size, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, ref_vel);
 										}
 									}
 								}
