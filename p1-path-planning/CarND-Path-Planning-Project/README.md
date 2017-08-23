@@ -1,6 +1,17 @@
 # CarND-Path-Planning-Project
 Self-Driving Car Engineer Nanodegree Program
    
+
+### Reflection
+
+The following approach was used to arrive at the solution.
+
+1. First, I attempted to make the car just drive in a straight line. This was done quite easily using the code snippets provided in the classroom, by adding a small increment to the `x` and `y` coordinates.
+
+https://github.com/Deborah-Digges/SDC-ND-term-3/blob/9ccccf63b7ef29e579486e4cc0adf8b828e8c7ad/p1-path-planning/CarND-Path-Planning-Project/src/main.cpp#L244-L249
+
+
+
 ### Simulator. You can download the Term3 Simulator BETA which contains the Path Planning Project from the [releases tab](https://github.com/udacity/self-driving-car-sim/releases).
 
 In this project your goal is to safely navigate around a virtual highway with other traffic that is driving +-10 MPH of the 50 MPH speed limit. You will be provided the car's localization and sensor fusion data, there is also a sparse map list of waypoints around the highway. The car should try to go as close as possible to the 50 MPH speed limit, which means passing slower traffic when possible, note that other cars will try to change lanes too. The car should avoid hitting other cars at all cost as well as driving inside of the marked road lanes at all times, unless going from one lane to another. The car should be able to make one complete loop around the 6946m highway. Since the car is trying to go 50 MPH, it should take a little over 5 minutes to complete 1 loop. Also the car should not experience total acceleration over 10 m/s^2 and jerk that is greater than 50 m/s^3.
