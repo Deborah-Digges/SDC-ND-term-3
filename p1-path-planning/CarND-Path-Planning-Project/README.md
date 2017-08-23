@@ -6,9 +6,18 @@ Self-Driving Car Engineer Nanodegree Program
 
 The following approach was used to arrive at the solution.
 
-1. First, I attempted to make the car just drive in a straight line. This was done quite easily using the code snippets provided in the classroom, by adding a small increment to the `x` and `y` coordinates.
+1. First, I attempted to make the car just [drive in a straight line](https://github.com/Deborah-Digges/SDC-ND-term-3/blob/9ccccf63b7ef29e579486e4cc0adf8b828e8c7ad/p1-path-planning/CarND-Path-Planning-Project/src/main.cpp#L244-L249). This was done quite easily using the code snippets provided in the classroom, by adding a small increment to the `x` and `y` coordinates.
 
-https://github.com/Deborah-Digges/SDC-ND-term-3/blob/9ccccf63b7ef29e579486e4cc0adf8b828e8c7ad/p1-path-planning/CarND-Path-Planning-Project/src/main.cpp#L244-L249
+```
+  double dist_inc = 0.5;
+
+
+  for(int i=0; i<50; ++i) {
+    next_x_vals.push_back(car_x + (dist_inc * i) * cos(deg2rad(car_yaw)));
+    next_y_vals.push_back(car_y + (dist_inc * i) * sin(deg2rad(car_yaw)));
+  }
+```
+
 
 
 
