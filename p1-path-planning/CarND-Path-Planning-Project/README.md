@@ -54,6 +54,9 @@ for(int i=0; i<50; ++i) {
 - **Generating points along the spline**: We [break up the spline points](https://github.com/Deborah-Digges/SDC-ND-term-3/blob/ab2cab3656402e6fc48f01f3ca8eee5ee40cbf1c/p1-path-planning/CarND-Path-Planning-Project/src/main.cpp#L330-L354) into small distance increments so that we travel at the desired velocity. 
 - **Generate Trajectory**: This set of points is transformed back to the global coordinate system and constitutes our generated trajectory.
 
+4. The car now moved quite smoothly but still collided with other vehicles along it's path. In order to detect and prevent collision, [the sensor fusion data about the surrounding vehicles was used](https://github.com/Deborah-Digges/SDC-ND-term-3/blob/ed31cfd09e7f0ff573d7a21f059ebc37af26e55b/p1-path-planning/CarND-Path-Planning-Project/src/main.cpp#L253-L278). The sensor fusion data was searched for any cars in the current lane of the car within some threshold distance. If there was such a car, the eho vehicle was made to slow down gradually to avoid collision. If there was no car detected in the car's lane, the car was made to accelerate gradually until the desired velocity was achieved.
+
+
 
 ### Simulator. You can download the Term3 Simulator BETA which contains the Path Planning Project from the [releases tab](https://github.com/udacity/self-driving-car-sim/releases).
 
