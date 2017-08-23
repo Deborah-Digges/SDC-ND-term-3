@@ -57,6 +57,10 @@ for(int i=0; i<50; ++i) {
 
 5. The car now moved without colliding with other vehicles. However, it is possible that the car could be stuck behind a slow vehicle for a long time, even when there is a free lane to which it can switch.
 
+## Video
+
+The project can be seen in action in the video found [here](https://www.youtube.com/watch?v=53QXQfbnrG4&feature=youtu.be)
+
 ## Simulator. 
 
 You can download the Term3 Simulator BETA which contains the Path Planning Project from the [releases tab](https://github.com/udacity/self-driving-car-sim/releases).
