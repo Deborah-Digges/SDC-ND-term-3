@@ -46,13 +46,13 @@ for(int i=0; i<50; ++i) {
 ```
 
 3. The car was now following it's lane but exceeding the limits for both acceleration and jerk. In order to generate smoother, less jerky paths, a [spline was used to generate the trajectory](https://github.com/Deborah-Digges/SDC-ND-term-3/blob/ab2cab3656402e6fc48f01f3ca8eee5ee40cbf1c/p1-path-planning/CarND-Path-Planning-Project/src/main.cpp#L258-L355). The main steps involved in trajectory generation using a spline included:
-- *Creation of a starting reference for the trajectory*: The car's coordinate or the last two points in the previous trajectory are used to create a starting reference for the trajectory
-- *Creation of a widely spaced list of waypoints (x,y)*: The current waypoints were sparsely spaced which resulted in jerky behaviour around egdes when converting between Frenet and Cartesian Coordinates.
+- **Creation of a starting reference for the trajectory**: The car's coordinate or the last two points in the previous trajectory are used to create a starting reference for the trajectory
+- **Creation of a widely spaced list of waypoints (x,y)**: The current waypoints were sparsely spaced which resulted in jerky behaviour around egdes when converting between Frenet and Cartesian Coordinates.
   - Three points are placed in 30m intervals ahead of the reference point by incrementing the s coordinate and keeping d constant, resulting in 4 points: `[ref_s, ref_s+30, ref_s + 60, ref_s + 90]`.
-- *Coordinate tranformation of widely spaced waypoints*: A coordinate transformation of these 4 points is done to make the math simpler. The coordinates are transformed into the car's coordinate system.
-- *Spline fitting*: A spline is fit to these transformed points
-- *Generating points along the spline*: We [break up the spline points](https://github.com/Deborah-Digges/SDC-ND-term-3/blob/ab2cab3656402e6fc48f01f3ca8eee5ee40cbf1c/p1-path-planning/CarND-Path-Planning-Project/src/main.cpp#L330-L354) into small distance increments so that we travel at the desired velocity. 
-- *Generate Trajectory*: This set of points is transformed back to the global coordinate system and constitutes our generated trajectory.
+- **Coordinate tranformation of widely spaced waypoints**: A coordinate transformation of these 4 points is done to make the math simpler. The coordinates are transformed into the car's coordinate system.
+- **Spline fitting**: A spline is fit to these transformed points
+- **Generating points along the spline**: We [break up the spline points](https://github.com/Deborah-Digges/SDC-ND-term-3/blob/ab2cab3656402e6fc48f01f3ca8eee5ee40cbf1c/p1-path-planning/CarND-Path-Planning-Project/src/main.cpp#L330-L354) into small distance increments so that we travel at the desired velocity. 
+- **Generate Trajectory**: This set of points is transformed back to the global coordinate system and constitutes our generated trajectory.
 
 
 ### Simulator. You can download the Term3 Simulator BETA which contains the Path Planning Project from the [releases tab](https://github.com/udacity/self-driving-car-sim/releases).
